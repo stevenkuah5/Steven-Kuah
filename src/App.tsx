@@ -55,6 +55,7 @@ export default function App() {
   const [currentCategory, setCurrentCategory] = useState<Category | null>(null);
   const [question, setQuestion] = useState<QuizQuestion | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [askedQuestions, setAskedQuestions] = useState<string[]>([]);
   const [rotation, setRotation] = useState(0);
   const [isSpinning, setIsSpinning] = useState(false);
   const [timeLeft, setTimeLeft] = useState(20);
@@ -80,6 +81,7 @@ export default function App() {
     setScore(0);
     setP2Score(0);
     setRounds(0);
+    setAskedQuestions([]);
     setCurrentPlayer(1);
     setGameState('SPINNING');
   };
@@ -127,8 +129,9 @@ export default function App() {
   const handleFetchQuestion = async (categoryLabel: string) => {
     setIsLoading(true);
     try {
-      const q = await generateQuestion(categoryLabel);
+      const q = await generateQuestion(categoryLabel, askedQuestions);
       setQuestion(q);
+      setAskedQuestions(prev => [...prev, q.question]);
       setGameState('QUESTION');
       setTimeLeft(20);
       startTimer();

@@ -9,11 +9,17 @@ export interface QuizQuestion {
   explanation: string;
 }
 
-export async function generateQuestion(category: string): Promise<QuizQuestion> {
+export async function generateQuestion(category: string, history: string[] = []): Promise<QuizQuestion> {
+  const historyPrompt = history.length > 0 
+    ? `IMPORTANT: This is a trivia game. Do NOT repeat any questions similar to these that were already asked in this session:\n- ${history.join('\n- ')}`
+    : '';
+
   const prompt = `Generate a fun and educational multiple-choice trivia question about Singapore in the category: "${category}". 
   The question should be suitable for a family game. 
   Include 4 distinct options and clearly mark the correct answer. 
-  Also provide a short, interesting fact as an explanation.`;
+  Also provide a short, interesting fact as an explanation.
+  
+  ${historyPrompt}`;
 
   const response = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
